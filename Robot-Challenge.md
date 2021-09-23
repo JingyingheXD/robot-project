@@ -1,4 +1,5 @@
-> Please don't fork this repo as your solution will be publicly visible from this repo.
+> **:warning: Please don't fork this repo as your solution will be publicly visible from this repo.**
+
 ***
 
 This code challenge should be a showcase of your programming skills. We encourage you to slightly over engineer your solution with good class design principles applied, good function names, variable names and a well structured program.
