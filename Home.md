@@ -1,1 +1,1 @@
-Welcome to the recruitment wiki!
+[Robot Challenge](RobotChallenge)
