@@ -3,33 +3,50 @@ class Robot:
         self.position = None
         self.direction = None
         self.table = table
+        self.id = None
 
     # parse instruction from input
     def get_instruction(self, instr_str):
-        instruction = instr_str.split(' ')[0]
-        if instruction == 'PLACE':
-            position_direction = instr_str.split(' ')[1]
-            self.place(position_direction)
-        elif instr_str == 'MOVE':
-            self.move()
-        elif instr_str == 'LEFT' or instr_str == 'RIGHT':
-            self.rotate(instruction)
-        elif instr_str == 'REPORT':
-            self.report()
-        else:
+        try:
+            instruction = instr_str.split(' ')[0]
+            if instruction == 'PLACE':
+                position_direction = instr_str.split(' ')[1]
+                self.place(position_direction)
+            elif instr_str == 'MOVE':
+                self.move()
+            elif instr_str == 'LEFT' or instr_str == 'RIGHT':
+                self.rotate(instruction)
+            elif instr_str == 'REPORT':
+                self.report()
+            # 'ROBOT xx'
+            elif instruction == 'ROBOT':
+                activate_rbt_id = instr_str.split(' ')[1]
+                self.activate_robot(activate_rbt_id)
+        except:
             print("Wrong input. Please input valid instruction again.\n")
 
+    # place and add a robot
     def place(self, pos_dirc):
         x, y, dirc = tuple(map(str, pos_dirc.split(',')))
-        self.position = (int(x), int(y))
-        self.direction = dirc
+        result_robot = self.table.check_robots((int(x), int(y)))
+        if result_robot == True:
+            new_robot = Robot(self.table)
+            new_robot.position = (int(x), int(y))
+            new_robot.direction = dirc
+            new_robot.id = len(self.table.robots) + 1
+            self.table.robots.append(new_robot)
+            if new_robot.id == 1:
+                self.table.active_robot = new_robot
+        else:
+            print('There is a robot in this position. Please choose another positon.')
 
     def check_border_result(self, rbt_asmpt_position):
-        result = self.table.check_boarder(rbt_asmpt_position)
-        if result == True:
+        result_border = self.table.check_boarder(rbt_asmpt_position)
+        result_robot = self.table.check_robots(rbt_asmpt_position)
+        if result_border == True and result_robot == True:
             self.position = rbt_asmpt_position
         else:
-            print('Exceed the border. Please input valid instruction again.')
+            print('Invalid position. Please input antoher instruction.')
 
     def move(self):
         if self.position != None and self.direction != None:
@@ -75,8 +92,13 @@ class Robot:
                 print("Robot has not been placed on the table.")
 
     def report(self):
-        if self.position == None and self.position == None:
+        if self.table.robots == []:
             print("Robot has not been placed on the table.")
         else:
-            x, y = self.position
-            print(x, ',', y, ',', self.direction)
+            for robot in self.table.robots:
+                x, y = robot.position
+                print('Robot <', robot.id, '>: ', x,
+                      ',', y, ',', robot.direction)
+
+    def activate_robot(self, activate_rbt_id):
+        self.table.active_robot = self.table.robots[int(activate_rbt_id) - 1]
